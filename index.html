@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="cs" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Řešení neobsazených IT pozic – Konzultační Služba</title>
+    <!-- Chosen Palette: Calm Corporate Blue (Slates, Indigo, Amber accent) -->
+    <!-- Application Structure Plan: A single-page, interactive journey guiding the user from identifying their specific pain points (interactive symptom checker) through understanding the unique 4-step analytical solution (explorable methodology section), seeing the tangible output (interactive Chart.js dashboard), understanding the consultant's value (differentiators), and finally to a clear call to action. This structure is chosen over a static page to increase engagement, personalize the experience, and clearly demonstrate the value and analytical nature of the service before the user even makes contact. -->
+    <!-- Visualization & Content Choices: 
+        - Problem Section: Interactive buttons (HTML/JS) for a "Symptom Checker". Goal: Engagement/Personalization. Justification: Makes the user's problem feel seen and understood.
+        - Methodology: Clickable cards (HTML/CSS/JS) to reveal details for each of the 4 steps. Goal: Organize/Inform. Justification: Breaks down a complex process into digestible, interactive chunks.
+        - Deliverable Section: Interactive donut chart (Chart.js/Canvas). Goal: Inform/Compare. Justification: Visually demonstrates the "data-driven" promise and shows a tangible output of the analysis (e.g., Source of Hire). Confirms no SVG/Mermaid.
+        - Icons: Unicode characters and CSS-styled elements. Goal: Visual aid. Justification: Adheres to no-SVG rule while enhancing UI.
+     -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .symptom-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .symptom-btn.selected {
+            background-color: #4f46e5;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+        }
+        .step-card .step-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        .step-card.open .step-content {
+            max-height: 500px;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+        .step-card.open .chevron {
+            transform: rotate(180deg);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+        }
+        @media (min-width: 640px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body class="text-slate-700">
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <header class="text-center py-20 sm:py-32">
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight">
+                Řešení neobsazených IT pozic
+            </h1>
+            <p class="mt-6 text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto">
+                Nabízím vám unikátní poradenskou službu, která se zaměřuje na hloubkovou analýzu vašeho náborového procesu. Mým cílem je poskytnout vám komplexní řešení a strategii, jak efektivně přilákat a udržet ty nejlepší IT talenty a zároveň vybavit váš tým pro řešení budoucích výzev.
+            </p>
+            <a href="#kontakt" class="mt-8 inline-block bg-indigo-600 text-white font-bold text-lg px-8 py-4 rounded-lg shadow-lg hover:bg-indigo-700 transition-colors duration-300">
+                Nezávazná konzultace
+            </a>
+        </header>
+
+        <section id="problem" class="py-16 sm:py-24 bg-white rounded-3xl shadow-xl p-6 sm:p-12">
+            <div class="text-center">
+                <h2 class="text-3xl sm:text-4xl font-bold text-slate-900">Potýkáte se s podobnými problémy?</h2>
+                <p class="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">Víte, že stávající postupy nepřinášejí výsledky, ale nejste si jisti, kde začít? Označte výzvy, které u vás rezonují nejvíce.</p>
+            </div>
+            <div id="symptom-checker" class="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <button class="symptom-btn text-left p-5 bg-slate-100 hover:bg-slate-200 rounded-lg font-semibold text-slate-800">
+                    <span class="text-2xl mr-2">⏱️</span> Dlouhá doba náboru
+                </button>
+                <button class="symptom-btn text-left p-5 bg-slate-100 hover:bg-slate-200 rounded-lg font-semibold text-slate-800">
+                    <span class="text-2xl mr-2">📉</span> Nízká kvalita kandidátů
+                </button>
+                <button class="symptom-btn text-left p-5 bg-slate-100 hover:bg-slate-200 rounded-lg font-semibold text-slate-800">
+                    <span class="text-2xl mr-2">🤷</span> Kandidáti odmítají nabídky
+                </button>
+                <button class="symptom-btn text-left p-5 bg-slate-100 hover:bg-slate-200 rounded-lg font-semibold text-slate-800">
+                    <span class="text-2xl mr-2">💸</span> Vysoké náklady na nábor
+                </button>
+                <button class="symptom-btn text-left p-5 bg-slate-100 hover:bg-slate-200 rounded-lg font-semibold text-slate-800">
+                    <span class="text-2xl mr-2">🔄</span> Neefektivní interní procesy
+                </button>
+                <button class="symptom-btn text-left p-5 bg-slate-100 hover:bg-slate-200 rounded-lg font-semibold text-slate-800">
+                    <span class="text-2xl mr-2">⚠️</span> Ztráta konkurenceschopnosti
+                </button>
+            </div>
+        </section>
+
+        <section id="reseni" class="py-20 sm:py-28">
+            <div class="text-center">
+                <h2 class="text-3xl sm:text-4xl font-bold text-slate-900">Můj komplexní přístup k řešení</h2>
+                <p class="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">Má metodika je navržena tak, aby odhalila skutečné příčiny problémů a poskytla vám konkrétní, implementovatelná řešení během 2-4 týdnů. Klikněte pro více detailů.</p>
+            </div>
+            <div id="steps-container" class="mt-12 max-w-3xl mx-auto space-y-4">
+                <div class="step-card bg-white rounded-xl shadow-lg border border-slate-200 cursor-pointer">
+                    <div class="p-6 flex justify-between items-center">
+                        <div class="flex items-center">
+                            <div class="text-3xl mr-5">1️⃣</div>
+                            <h3 class="text-xl font-bold text-slate-800">Komplexní SWOT analýza</h3>
+                        </div>
+                        <span class="chevron text-2xl text-indigo-500 transition-transform duration-300">▼</span>
+                    </div>
+                    <div class="step-content px-6 text-slate-600">
+                        Provedu hloubkovou analýzu vašich interních silných a slabých stránek, identifikuji externí příležitosti a hrozby na trhu a definuji vaše unikátní prodejní argumenty (USP), abychom přesně věděli, kde stojíte.
+                    </div>
+                </div>
+                <div class="step-card bg-white rounded-xl shadow-lg border border-slate-200 cursor-pointer">
+                    <div class="p-6 flex justify-between items-center">
+                        <div class="flex items-center">
+                            <div class="text-3xl mr-5">2️⃣</div>
+                            <h3 class="text-xl font-bold text-slate-800">Analýza trhu a konkurence</h3>
+                        </div>
+                        <span class="chevron text-2xl text-indigo-500 transition-transform duration-300">▼</span>
+                    </div>
+                    <div class="step-content px-6 text-slate-600">
+                        Porovnám vaši nabídku (plat, benefity, popis pozice) s realitou trhu. Zjistím, co je pro IT specialisty atraktivní, a kde můžete získat konkurenční výhodu.
+                    </div>
+                </div>
+                <div class="step-card bg-white rounded-xl shadow-lg border border-slate-200 cursor-pointer">
+                    <div class="p-6 flex justify-between items-center">
+                        <div class="flex items-center">
+                            <div class="text-3xl mr-5">3️⃣</div>
+                            <h3 class="text-xl font-bold text-slate-800">Analýza neúspěšných procesů</h3>
+                        </div>
+                        <span class="chevron text-2xl text-indigo-500 transition-transform duration-300">▼</span>
+                    </div>
+                    <div class="step-content px-6 text-slate-600">
+                        Prozkoumám data od zamítnutých kandidátů a identifikuji slabá místa ve vašem náborovém procesu. Zjistíme, proč kandidáti odcházejí a jak tomu předejít.
+                    </div>
+                </div>
+                <div class="step-card bg-white rounded-xl shadow-lg border border-slate-200 cursor-pointer">
+                    <div class="p-6 flex justify-between items-center">
+                        <div class="flex items-center">
+                            <div class="text-3xl mr-5">4️⃣</div>
+                            <h3 class="text-xl font-bold text-slate-800">Strategický plán a přenos know-how</h3>
+                        </div>
+                        <span class="chevron text-2xl text-indigo-500 transition-transform duration-300">▼</span>
+                    </div>
+                    <div class="step-content px-6 text-slate-600">
+                        Vytvořím akční plán s konkrétními doporučeními pro optimalizaci. Předám vám nejen řešení, ale i metodiku a klíčové poznatky, které posílí váš interní tým a připraví vás na budoucí výzvy.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="vysledek" class="py-16 sm:py-24 bg-white rounded-3xl shadow-xl p-6 sm:p-12">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-3xl sm:text-4xl font-bold text-slate-900">Váš výstup: Datově řízená strategie</h2>
+                    <p class="mt-4 text-lg text-slate-600">Místo dohadů získáte jasný přehled. Součástí mého výstupu je vizuální dashboard, který vám ukáže, kde se skrývají příležitosti. Například analýza zdrojů vám může odhalit, že investujete do neefektivních kanálů, zatímco ty nejcennější zdroje zůstávají nevyužity.</p>
+                    <ul class="mt-6 space-y-3 text-slate-600">
+                        <li class="flex items-start"><span class="text-indigo-500 font-bold mr-2 mt-1">✓</span> Odhalení neefektivních náborových kanálů.</li>
+                        <li class="flex items-start"><span class="text-indigo-500 font-bold mr-2 mt-1">✓</span> Optimalizace rozpočtu a investic do náboru.</li>
+                        <li class="flex items-start"><span class="text-indigo-500 font-bold mr-2 mt-1">✓</span> Posílení vaší pozice na trhu práce.</li>
+                    </ul>
+                </div>
+                <div class="chart-container">
+                    <canvas id="sourceOfHireChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="proc-ja" class="py-20 sm:py-28">
+            <div class="text-center">
+                <h2 class="text-3xl sm:text-4xl font-bold text-slate-900">Proč spolupracovat právě se mnou?</h2>
+            </div>
+            <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-2xl shadow-lg border border-slate-200">
+                    <h3 class="text-xl font-bold text-slate-800">💡 Hluboké know-how z IT a HR</h3>
+                    <p class="mt-3 text-slate-600">Jsem hybridní profesionál s více než 20 lety zkušeností a vzděláním v technických (MSc) i manažerských (MBA) oborech. Rozumím oběma světům.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-lg border border-slate-200">
+                    <h3 class="text-xl font-bold text-slate-800">📈 Analytický a datový přístup</h3>
+                    <p class="mt-3 text-slate-600">Zaměřuji se na hledání skutečných příčin problémů pomocí dat, KPI dashboardů a procesní analýzy, nikoli na obecná doporučení.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-lg border border-slate-200">
+                    <h3 class="text-xl font-bold text-slate-800">🎓 Přenos know-how a posílení týmu</h3>
+                    <p class="mt-3 text-slate-600">Nezískáte jen řešení, ale i metodický rámec, který vám pomůže řešit náborové výzvy efektivněji i v budoucnu.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="kontakt" class="py-16 sm:py-24 bg-indigo-700 rounded-3xl shadow-2xl text-white my-20 p-8 sm:p-16 text-center">
+             <h2 class="text-3xl sm:text-4xl font-bold">Ukončete neefektivní nábor a získejte IT talenty, které potřebujete!</h2>
+             <p class="mt-4 text-lg text-indigo-200 max-w-2xl mx-auto">
+                Jste připraveni odhalit a vyřešit příčiny vašich náborových potíží a zároveň posílit své interní schopnosti? Kontaktujte mě pro nezávaznou úvodní konzultaci.
+             </p>
+            <div class="mt-8 flex flex-col sm:flex-row justify-center items-center gap-6">
+    <!-- Telefonní číslo -->
+    <a href="tel:+420603174328" class="text-lg font-semibold hover:text-indigo-200 transition-colors duration-200">
+        📞 +420 603 174 328
+    </a>
+    <!-- E-mailová adresa -->
+    <a href="mailto:jr4u@janruzicka.cz" class="text-lg font-semibold hover:text-indigo-200 transition-colors duration-200">
+        📧 jr4u@janruzicka.cz
+    </a>
+    <!-- LinkedIn profil (pokud ho tam máte) -->
+    <a href="https://linkedin.com/in/honzaruzicka" target="_blank" rel="noopener noreferrer" class="text-lg font-semibold hover:text-indigo-200 transition-colors duration-200">
+        🔗 Linkedin
+    </a>
+    <!-- Váš web (pokud ho tam máte) -->
+    <a href="https://www.janruzicka.cz/cz" target="_blank" rel="noopener noreferrer" class="text-lg font-semibold hover:text-indigo-200 transition-colors duration-200">
+        🌐 Web: janruzicka.cz
+    </a>
+</div>
+        </section>
+
+    </div>
+
+    <footer class="text-center py-8 text-slate-500">
+        <p>&copy; 2025 Jan Ruzicka. Všechna práva vyhrazena.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Symptom Checker Interaction
+            const symptomButtons = document.querySelectorAll('.symptom-btn');
+            symptomButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    button.classList.toggle('selected');
+                });
+            });
+
+            // Accordion for methodology steps
+            const stepCards = document.querySelectorAll('.step-card');
+            stepCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    card.classList.toggle('open');
+                });
+            });
+            
+            // Chart.js Donut Chart
+            const ctx = document.getElementById('sourceOfHireChart').getContext('2d');
+            const sourceOfHireChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Doporučení', 'LinkedIn', 'Pracovní portály', 'Kariérní stránky', 'Ostatní'],
+                    datasets: [{
+                        label: 'Zdroj úspěšných kandidátů',
+                        data: [35, 25, 20, 10, 10],
+                        backgroundColor: [
+                            '#4338ca', // Indigo 700
+                            '#6366f1', // Indigo 500
+                            '#818cf8', // Indigo 400
+                            '#a5b4fc', // Indigo 300
+                            '#c7d2fe'  // Indigo 200
+                        ],
+                        borderColor: '#ffffff',
+                        borderWidth: 3,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    family: "'Inter', sans-serif",
+                                    size: 14,
+                                },
+                                color: '#475569' // slate-600
+                            }
+                        },
+                        tooltip: {
+                            titleFont: {
+                                family: "'Inter', sans-serif",
+                            },
+                            bodyFont: {
+                                family: "'Inter', sans-serif",
+                            },
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.raw + '%';
+                                }
+                            }
+                        },
+                        title: {
+                           display: true,
+                           text: 'Analýza zdrojů náboru',
+                           font: {
+                               size: 18,
+                               family: "'Inter', sans-serif",
+                               weight: 'bold'
+                           },
+                           color: '#1e293b' // slate-800
+                        }
+                    },
+                    cutout: '60%'
+                }
+            });
+        });
+    </script>
+</body>
+</html>
